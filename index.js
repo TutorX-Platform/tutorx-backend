@@ -58,10 +58,10 @@ app.post("/email", async (req, res) => {
     }));
 
     var mailOptions = {
-        from: 'somerealemail@gmail.com',
-        to: 'sandunsameera25@gmail.com',
-        subject: 'Sending Email using Node.js[nodemailer]',
-        text: 'That was easy!'
+        from: req.body.fromEmail,
+        to: req.body.toEmail,
+        subject: req.body.subject,
+        text: req.body.text
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
@@ -80,6 +80,6 @@ app.post("/email", async (req, res) => {
 
 
 // listen
-app.listen(process.env.PORT|| 5000, () => {
+app.listen(process.env.PORT || 5000, () => {
     console.log("Express Server started at port: " + process.env.PORT);
-  });
+});
