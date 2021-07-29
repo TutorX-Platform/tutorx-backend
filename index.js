@@ -1,7 +1,7 @@
 const cors = require("cors");
 const express = require("express");
 const { v4: uuidv4 } = require('uuid');
-const stripe = require("stripe")(process.env.publishable_key)
+const stripe = require("stripe")("sk_test_51Ff6WELnesZei0Uruf1G7kolU3wK7Skh1eZc5t69eiX7Qst52l1xmXlRicvITG1B7RDnKtGKMWqjE63ijQfSbin400hLsoJ2ea")
 const nodemailer = require("nodemailer");
 var smtpTransport = require('nodemailer-smtp-transport');
 
@@ -39,7 +39,12 @@ app.post("/payment", (req, res) => {
             status: 200
         }
         res.status(200).json(response)
-    }).catch(err => console.log(err))
+    }).catch(err => {
+        const response = {
+            status: 400
+        }
+        res.status(400).json(response)
+    })
 });
 
 app.post("/email", async (req, res) => {
