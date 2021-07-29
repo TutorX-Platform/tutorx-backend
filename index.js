@@ -80,4 +80,6 @@ app.post("/email", async (req, res) => {
 
 
 // listen
-app.listen(8282, () => console.log("listning at port 8282"));
+app.listen(process.env.PORT|| 5000, () => {
+    console.log("Express Server started at port: " + process.env.PORT);
+  });
