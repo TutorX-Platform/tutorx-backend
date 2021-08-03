@@ -10,7 +10,7 @@ const app = express();
 // middleware
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({origin: '*'}));
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
@@ -66,6 +66,7 @@ app.post("/payment", (req, res) => {
 });
 
 app.post("/email", async (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
     var transporter = nodemailer.createTransport(smtpTransport({
         service: 'gmail',
         host: 'smtp.gmail.com',
