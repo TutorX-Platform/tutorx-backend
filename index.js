@@ -4,23 +4,31 @@ const { v4: uuidv4 } = require('uuid');
 const stripe = require("stripe")("sk_test_51Ff6WELnesZei0UrDmZSK8th4AycDeItUDsOiEB2I1gKx2yaPp8BOWpb4P8FvX4bsewm6wbPHtioqr0eeb9hmaxD00Vh8PL3H8")
 const nodemailer = require("nodemailer");
 var smtpTransport = require('nodemailer-smtp-transport');
+const { response } = require("express");
 
 const app = express();
 
 // middleware
 
 app.use(express.json());
-app.use(cors({origin: '*'}));
-app.use(function(req, res, next) {
+app.use(cors({ origin: '*' }));
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-   next();
-  });
+    next();
+});
 
 
 //routes
 app.get("/", (req, res) => {
     res.send("tutorx payment backend works");
+})
+
+app.get('/time', (req, res) => {
+    response = {
+        time: new Date()
+    }
+    res.send(response);
 })
 
 app.post("/payment", (req, res) => {
