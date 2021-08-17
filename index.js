@@ -25,10 +25,11 @@ app.get("/", (req, res) => {
 })
 
 app.get('/time', (req, res) => {
-    response = {
-        time: new Date()
+   const response = {
+        time: Date.now(),
+       status:'success'
     }
-    res.send(response);
+   return res.status(200).send(response);
 })
 
 app.post("/payment", (req, res) => {
@@ -94,6 +95,6 @@ app.post("/email", async (req, res) => {
 
 
 // listen
-app.listen(process.env.PORT || 5000, () => {
+app.listen(5000, () => {
     console.log("Express Server started at port: " + process.env.PORT);
 });
