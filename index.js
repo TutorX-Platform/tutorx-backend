@@ -25,11 +25,11 @@ app.get("/", (req, res) => {
 })
 
 app.get('/time', (req, res) => {
-   const response = {
+    const response = {
         time: Date.now(),
-       status:'success'
+        status: 'success'
     }
-   return res.status(200).send(response);
+    return res.status(200).send(response);
 })
 
 app.post("/payment", (req, res) => {
@@ -63,17 +63,17 @@ app.post("/payment", (req, res) => {
 
 app.post("/email", async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
-    var transporter = nodemailer.createTransport(smtpTransport({
+    var transporter = nodemailer.createTransport({
         service: 'gmail',
         host: 'smtp.gmail.com',
         auth: {
             user: 'sandunsameera25@gmail.com',
             pass: 'sandunsameeragmail'
         }
-    }));
+    });
 
     var mailOptions = {
-        from: req.body.fromEmail,
+        from: 'sandunsameera25@gmail.com',
         to: req.body.toEmail,
         subject: req.body.subject,
         text: req.body.text
