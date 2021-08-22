@@ -4,13 +4,14 @@ const stripe = require("stripe")("sk_test_51Ff6WELnesZei0UrDmZSK8th4AycDeItUDsOi
 const nodemailer = require("nodemailer");
 var smtpTransport = require('nodemailer-smtp-transport');
 const { response } = require("express");
+const cors = require("cors");
 
 const app = express();
 
 // middleware
 
 app.use(express.json());
-app.use(cors({ origin: '*' }));
+app.use(cors());
 
 
 
