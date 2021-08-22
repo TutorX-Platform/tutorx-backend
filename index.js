@@ -1,4 +1,3 @@
-const cors = require("cors");
 const express = require("express");
 const { v4: uuidv4 } = require('uuid');
 const stripe = require("stripe")("sk_test_51Ff6WELnesZei0UrDmZSK8th4AycDeItUDsOiEB2I1gKx2yaPp8BOWpb4P8FvX4bsewm6wbPHtioqr0eeb9hmaxD00Vh8PL3H8")
@@ -12,11 +11,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors({ origin: '*' }));
-app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+
 
 
 //routes
@@ -69,7 +64,10 @@ app.post("/email", async (req, res) => {
         auth: {
             user: 'sandunsameera25@gmail.com',
             pass: 'sandunsameeragmail'
-        }
+        },
+        tls: {
+            rejectUnauthorized: false,
+        },
     });
 
     var mailOptions = {
@@ -81,7 +79,8 @@ app.post("/email", async (req, res) => {
 
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
-            console.log(error);
+            res.send({ error: "Email has not been sent..." });
+            return console.log(error);
         } else {
             const response = {
                 status: 200,
