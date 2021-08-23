@@ -80,7 +80,7 @@ app.post("/email", async (req, res) => {
 
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
-            res.send({ error: "Email has not been sent...", request: req.body });
+            res.send({ error: "Email has not been sent...", request: req.body, error: error });
             return console.log(error);
         } else {
             const response = {
