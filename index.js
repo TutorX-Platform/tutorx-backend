@@ -47,7 +47,6 @@ app.post("/payment", (req, res) => {
     }).then((result) => {
         const response = {
             message: "payment success",
-            payRef: customer.id,
             result: result,
             status: 200
         }
