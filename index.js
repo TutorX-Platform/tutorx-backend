@@ -46,6 +46,7 @@ app.post("/payment", (req, res) => {
         })
     }).then((result) => {
         const response = {
+            message: "payment success",
             result: result,
             status: 200
         }
