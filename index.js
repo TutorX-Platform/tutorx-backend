@@ -46,11 +46,13 @@ app.post("/payment", (req, res) => {
         })
     }).then((result) => {
         const response = {
+            result: result,
             status: 200
         }
         res.status(200).json(response)
     }).catch(err => {
         const response = {
+            error: err,
             status: 400
         }
         res.status(400).json(response)
@@ -62,6 +64,8 @@ app.post("/email", async (req, res) => {
     var transporter = nodemailer.createTransport({
         service: 'gmail',
         host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
         auth: {
             user: 'sandunsameera25@gmail.com',
             pass: 'sandunsameeragmail'
