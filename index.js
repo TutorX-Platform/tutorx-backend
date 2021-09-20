@@ -5,8 +5,10 @@ const nodemailer = require("nodemailer");
 var smtpTransport = require('nodemailer-smtp-transport');
 const { response } = require("express");
 const cors = require("cors");
+var generator = require('./utils/generator')
 
 const app = express();
+const hbs = require('nodemailer-express-handlebars');
 
 // middleware
 
@@ -63,24 +65,25 @@ app.post("/payment", (req, res) => {
 app.post("/email", async (req, res) => {
     res.header("Access-Control-Allow-Origin", "*");
     var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        host: 'smtp.gmail.com',
+        host: 'smtppro.zoho.eu',
         port: 465,
         secure: true,
         auth: {
-            user: 'sandunsameera25@gmail.com',
-            pass: 'sandunsameeragmail'
+            user: 'noreply@tutetory.com',
+            pass: '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'
         },
         tls: {
             rejectUnauthorized: false,
         },
     });
 
+
     var mailOptions = {
-        from: 'sandunsameera25@gmail.com',
+        from: 'noreply@tutetory.com',
         to: req.body.toEmail,
         subject: req.body.subject,
-        text: req.body.text
+        text: req.body.text,
+        html : { path: './views/main.handlebars' }
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
@@ -96,6 +99,15 @@ app.post("/email", async (req, res) => {
             res.status(200).json(response)
         }
     });
+});
+
+app.get("/id", (req, res) => {
+    var seqId = generator.generate();
+    const response = {
+        status: 200,
+        message: seqId
+    }
+    res.status(200).json(response);
 })
 
 
