@@ -9,11 +9,21 @@ var generator = require('./utils/generator')
 
 const app = express();
 const hbs = require('nodemailer-express-handlebars');
+const DeviceDetector = require("device-detector-js");
 
 // middleware
-
+var whitelist = ['https://tutetory.com']
+var corsOptions = {
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
+    }
+}
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 
 
 
@@ -83,7 +93,7 @@ app.post("/email", async (req, res) => {
         to: req.body.toEmail,
         subject: req.body.subject,
         text: req.body.text,
-        html : { path: './views/main.handlebars' }
+        html: { path: './views/main.handlebars' }
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
@@ -109,6 +119,27 @@ app.get("/id", (req, res) => {
     }
     res.status(200).json(response);
 })
+
+app.get("/validate", (req, res) => {
+    const deviceDetector = new DeviceDetector();
+    const userAgent = req.headers['user-agent'];
+    const device = deviceDetector.parse(userAgent);
+    let response = {};
+    if (device.client != null && device.client.type === 'browser') {
+        response = {
+            status: 200,
+            message: true
+        }
+        res.status(200).json(response);
+    } else {
+        response = {
+            status: 400,
+            message: false
+        }
+        res.status(400).json(response);
+    }
+})
+
 
 
 // listen
