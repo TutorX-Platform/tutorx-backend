@@ -149,8 +149,11 @@ app.get("/validate", (req, res) => {
 app.post("/question", async (req, res) => {
     try {
         const data = req.body;
-         await firestore.collection('question').doc(data.id).set(data);
-        res.send('record added');
+        await firestore.collection('question').doc(data.id).set(data);
+        const response = {
+            staus: 200
+        }
+        res.status(200).send(response);
     } catch (err) {
         res.status(400).send(err.message);
     }
