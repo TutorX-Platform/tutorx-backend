@@ -10,6 +10,10 @@ var generator = require('./utils/generator')
 const app = express();
 const hbs = require('nodemailer-express-handlebars');
 const DeviceDetector = require("device-detector-js");
+const bodyParser = require("body-parser");
+const firebase = require('./db');
+const question = require('./models/question');
+const firestore = firebase.firestore();
 
 // middleware
 // var whitelist = ['https://tutetory.com']
@@ -25,7 +29,7 @@ const DeviceDetector = require("device-detector-js");
 app.use(express.json());
 // app.use(cors(corsOptions));
 app.use(cors());
-
+app.use(bodyParser.json());
 
 
 //routes
@@ -141,6 +145,16 @@ app.get("/validate", (req, res) => {
     }
 })
 
+
+app.post("/question", async (req, res) => {
+    try {
+        const data = req.body;
+         await firestore.collection('question').doc(data.id).set(data);
+        res.send('record added');
+    } catch (err) {
+        res.status(400).send(err.message);
+    }
+})
 
 
 // listen
