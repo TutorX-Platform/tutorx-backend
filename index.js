@@ -6,6 +6,7 @@ var smtpTransport = require('nodemailer-smtp-transport');
 const { response } = require("express");
 const cors = require("cors");
 var generator = require('./utils/generator')
+var replacements = require('./replacements');
 
 const app = express();
 const hbs = require('nodemailer-express-handlebars');
@@ -14,6 +15,10 @@ const bodyParser = require("body-parser");
 const firebase = require('./db');
 const question = require('./models/question');
 const firestore = firebase.firestore();
+var fs = require('fs');
+var handlebars = require('handlebars');
+
+
 
 // middleware
 // var whitelist = ['https://tutetory.com']
@@ -95,13 +100,55 @@ app.post("/email", async (req, res) => {
 
     var mailOptions = {
         from: 'noreply@tutetory.com',
-        to: req.body.toEmail,
-        subject: req.body.subject,
-        text: req.body.text,
+        to: 'sandunsameera25@gmail.com',
+        subject: 'req.body.subject',
+        text: 'req.body.text',
         html: { path: './views/main.handlebars' }
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            res.send({ error: "Email has not been sent...", request: req.body, error: error });
+            return console.log(error);
+        } else {
+            const response = {
+                status: 200,
+                message: "email sent"
+            }
+            console.log('Email sent: ' + info.response);
+            res.status(200).json(response)
+        }
+    });
+});
+
+app.post("/mail", async (req, res) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    var replace = require('./replacements');
+    const filePath = './views/' + req.body.fileName;
+    const source = fs.readFileSync(filePath, 'utf-8').toString();
+    const template = handlebars.compile(source);
+    const replacements = req.body.replacement;
+    const htmlToSend = template(replacements);
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        port: 465,
+        secure: true,
+        auth: {
+            user: 'sandunsameera25@gmail.com',
+            pass: 'sandunsameeragmail'
+        },
+        tls: {
+            rejectUnauthorized: false,
+        },
+    });
+    const mailOptions = {
+        from: "noreply@tutetory.com",
+        to: "sandunsameera25@gmail.com",
+        subject: "subject",
+        text: "url",
+        html: htmlToSend
+    };
+    const info = await transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             res.send({ error: "Email has not been sent...", request: req.body, error: error });
             return console.log(error);
