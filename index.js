@@ -143,8 +143,8 @@ app.post("/mail", async (req, res) => {
     });
     const mailOptions = {
         from: "noreply@tutetory.com",
-        to: "sandunsameera25@gmail.com",
-        subject: "subject",
+        to: req.body.toEmail,
+        subject: req.body.subject,
         text: "url",
         html: htmlToSend
     };
