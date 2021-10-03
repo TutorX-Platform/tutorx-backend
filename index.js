@@ -129,13 +129,13 @@ app.post("/mail", async (req, res) => {
     const template = handlebars.compile(source);
     const replacements = req.body.replacement;
     const htmlToSend = template(replacements);
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
+    var transporter = nodemailer.createTransport({
+        host: 'smtppro.zoho.eu',
         port: 465,
         secure: true,
         auth: {
-            user: 'sandunsameera25@gmail.com',
-            pass: 'sandunsameeragmail'
+            user: 'noreply@tutetory.com',
+            pass: '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'
         },
         tls: {
             rejectUnauthorized: false,
