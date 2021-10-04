@@ -195,7 +195,9 @@ app.get("/validate", (req, res) => {
 
 app.post("/question", async (req, res) => {
     try {
-        const data = req.body;
+        var abc = new Date(req.body.dueDate)
+        var data = req.body;
+        data.dueDate = abc;
         await firestore.collection('question').doc(data.id).set(data);
         const response = {
             staus: 200
