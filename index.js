@@ -18,6 +18,18 @@ const firestore = firebase.firestore();
 var fs = require('fs');
 var handlebars = require('handlebars');
 
+var api_key = '01cf879ace282abd0111ae714dc21dfa-2bf328a5-3af313e4';
+var domain = 'tutetory.com';
+var mailgun = require('mailgun-js')({ apiKey: api_key, domain: domain, host: 'api.eu.mailgun.net' });
+
+var data = {
+    from: "sandunsameera25@gmail.com",
+    to: 'tharindu.prf@gmail.com',
+    subject: 'hello',
+    text: "welcome to tutetory"
+}
+
+
 
 
 // middleware
@@ -31,6 +43,7 @@ var handlebars = require('handlebars');
 //         }
 //     }
 // }
+
 app.use(express.json());
 // app.use(cors(corsOptions));
 app.use(cors());
@@ -48,10 +61,22 @@ app.get('/time', (req, res) => {
         status: 'success'
     }
     return res.status(200).send(response);
+});
+
+app.post('/email', (req, res) => {
+    mailgun.messages().send(data, function (error, body) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log(body, "sent mail");
+        }
+        // console.log(body, "abc");
+    })
+
 })
 
 app.post("/payment", (req, res) => {
-
+    const resp = {};
     const { product, token } = req.body;
     const idempontencyKey = uuidv4();
 
@@ -70,7 +95,8 @@ app.post("/payment", (req, res) => {
         const response = {
             message: "payment success",
             result: result,
-            status: 200
+            status: 200,
+            resp: resp
         }
         res.status(200).json(response)
     }).catch(err => {
@@ -80,87 +106,6 @@ app.post("/payment", (req, res) => {
         }
         res.status(400).json(response)
     })
-});
-
-app.post("/email", async (req, res) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    var transporter = nodemailer.createTransport({
-        host: 'smtppro.zoho.eu',
-        port: 465,
-        secure: true,
-        auth: {
-            user: 'noreply@tutetory.com',
-            pass: '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'
-        },
-        tls: {
-            rejectUnauthorized: false,
-        },
-    });
-
-
-    var mailOptions = {
-        from: 'noreply@tutetory.com',
-        to: 'sandunsameera25@gmail.com',
-        subject: 'req.body.subject',
-        text: 'req.body.text',
-        html: { path: './views/main.handlebars' }
-    };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            res.send({ error: "Email has not been sent...", request: req.body, error: error });
-            return console.log(error);
-        } else {
-            const response = {
-                status: 200,
-                message: "email sent"
-            }
-            console.log('Email sent: ' + info.response);
-            res.status(200).json(response)
-        }
-    });
-});
-
-app.post("/mail", async (req, res) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    var replace = require('./replacements');
-    const filePath = './views/' + req.body.fileName;
-    const source = fs.readFileSync(filePath, 'utf-8').toString();
-    const template = handlebars.compile(source);
-    const replacements = req.body.replacement;
-    const htmlToSend = template(replacements);
-    var transporter = nodemailer.createTransport({
-        host: 'smtppro.zoho.eu',
-        port: 465,
-        secure: true,
-        auth: {
-            user: 'noreply@tutetory.com',
-            pass: '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'
-        },
-        tls: {
-            rejectUnauthorized: false,
-        },
-    });
-    const mailOptions = {
-        from: "noreply@tutetory.com",
-        to: req.body.toEmail,
-        subject: req.body.subject,
-        text: "url",
-        html: htmlToSend
-    };
-    const info = await transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            res.send({ error: "Email has not been sent...", request: req.body, error: error });
-            return console.log(error);
-        } else {
-            const response = {
-                status: 200,
-                message: "email sent"
-            }
-            console.log('Email sent: ' + info.response);
-            res.status(200).json(response)
-        }
-    });
 });
 
 app.get("/id", (req, res) => {
@@ -206,7 +151,45 @@ app.post("/question", async (req, res) => {
     } catch (err) {
         res.status(400).send(err.message);
     }
-})
+});
+
+app.post("/mail", async (req, res) => {
+    try {
+        var replace = require('./replacements');
+        const replacements = req.body.replacement;
+        const filePath = './views/' + req.body.fileName;
+        const source = fs.readFileSync(filePath, 'utf-8').toString();
+        const template = handlebars.compile(source);
+        const htmlToSend = template(replacements);
+        var api_key = '0031faca3939ed12a071f6e275ce1506-2ac825a1-1322dfe9';
+        var domain = 'sandbox67b0de9ada694876b232dec5723f3e27.mailgun.org';
+        var mailgun = require('mailgun-js')({ apiKey: api_key, domain: domain });
+
+        var data = {
+            from: "noreply@tutetory.com",
+            to: req.body.toEmail,
+            subject: req.body.subject,
+            html: htmlToSend
+        };
+
+        mailgun.messages().send(data, function (error, body) {
+            if (error) {
+                res.send({ error: "Email has not been sent...", request: req.body, error: error });
+                return console.log(error);
+            } else {
+                const response = {
+                    status: 200,
+                    message: "email sent"
+                }
+                res.status(200).json(response);
+            }
+        });
+    } catch (err) {
+        res.status(400).send(err.message);
+    }
+});
+
+
 
 
 // listen
