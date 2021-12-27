@@ -1,6 +1,6 @@
 const express = require("express");
 const { v4: uuidv4 } = require('uuid');
-const stripe = require("stripe")("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")
+const stripe = require("stripe")("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")
 const nodemailer = require("nodemailer");
 var smtpTransport = require('nodemailer-smtp-transport');
 const { response } = require("express");
