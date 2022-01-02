@@ -17,6 +17,7 @@ const question = require('./models/question');
 const firestore = firebase.firestore();
 var fs = require('fs');
 var handlebars = require('handlebars');
+const console = require("console");
 
 var api_key = '01cf879ace282abd0111ae714dc21dfa-2bf328a5-3af313e4';
 var domain = 'tutetory.com';
@@ -76,36 +77,56 @@ app.post('/email', (req, res) => {
 })
 
 app.post("/payment", (req, res) => {
-    const resp = {};
-    const { product, token } = req.body;
-    const idempontencyKey = uuidv4();
+    try {
+        const resp = {};
+        const { product, token } = req.body;
 
-    return stripe.customers.create({
-        email: token.email,
-        source: token.id,
-    }).then(customer => {
-        stripe.charges.create({
-            amount: product.price * 100,
-            currency: 'USD',
-            customer: customer.id,
-            description: `Purchase of ${product.name}`,
-            receipt_email: product.email
+        return stripe.customers.create({
+            email: token.email,
+            source: token.id,
+        }).catch(err => {
+            console.log("1");
+            const response = {
+                error: err.raw.message,
+                status: 400
+            }
+            // console.log("sent", 1)
+            res.status(400).send(response)
+            res.end();
+            return;
+        }).then(customer => {
+            stripe.charges.create({
+                amount: product.price * 100,
+                currency: 'USD',
+                customer: customer.id,
+                description: `Purchase of ${product.name}`,
+                receipt_email: product.email
+            }, function (err, charge) {
+                if (err) {
+                    // console.log("new error", err);
+                    const response = {
+                        error: err.raw.message,
+                        status: 400
+                    }
+                    res.status(400).send(response);
+                    return;
+                } else {
+                    // console.log(charge);
+                    const response = {
+                        error: "Success",
+                        status: 200,
+                        charge: charge
+                    }
+                    res.status(200).send(response);
+
+                }
+            })
+
         })
-    }).then((result) => {
-        const response = {
-            message: "payment success",
-            result: result,
-            status: 200,
-            resp: resp
-        }
-        res.status(200).json(response)
-    }).catch(err => {
-        const response = {
-            error: err,
-            status: 400
-        }
-        res.status(400).json(response)
-    })
+    } catch (e) {
+        // console.log("3");
+        // console.log(e, "this is error");
+    }
 });
 
 app.get("/id", (req, res) => {
