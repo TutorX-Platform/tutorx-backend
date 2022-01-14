@@ -182,9 +182,9 @@ app.post("/mail", async (req, res) => {
         const source = fs.readFileSync(filePath, 'utf-8').toString();
         const template = handlebars.compile(source);
         const htmlToSend = template(replacements);
-        var api_key = '0031faca3939ed12a071f6e275ce1506-2ac825a1-1322dfe9';
-        var domain = 'sandbox67b0de9ada694876b232dec5723f3e27.mailgun.org';
-        var mailgun = require('mailgun-js')({ apiKey: api_key, domain: domain });
+        var api_key = '01cf879ace282abd0111ae714dc21dfa-2bf328a5-3af313e4';
+        var domain = 'tutetory.com';
+        var mailgun = require('mailgun-js')({ apiKey: api_key, domain: domain, host: 'api.eu.mailgun.net' });
 
         var data = {
             from: "noreply@tutetory.com",
